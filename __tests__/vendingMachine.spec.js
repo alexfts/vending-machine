@@ -149,31 +149,39 @@ describe('VendingMachine', () => {
     expect(() => vendingMachine.refillInventory(null, 5)).toThrow(
       'Invalid product title'
     );
+    expect(vendingMachine.inventory).toEqual(inventory);
   });
   test('refillInventory("abc", 5)', () => {
     expect(() => vendingMachine.refillInventory('abc', 5)).toThrow(
       'Invalid product title'
     );
+    expect(vendingMachine.inventory).toEqual(inventory);
   });
   test('refillInventory("Chips", "five")', () => {
     expect(() => vendingMachine.refillInventory('Chips', 'five')).toThrow(
       'Invalid quantity'
     );
+    expect(vendingMachine.inventory).toEqual(inventory);
   });
   test('refillInventory("Chips", 4.5)', () => {
     expect(() => vendingMachine.refillInventory('Chips', 4.5)).toThrow(
       'Invalid quantity'
     );
+    expect(vendingMachine.inventory).toEqual(inventory);
   });
   test('refillInventory("Chips", 4)', () => {
     vendingMachine.refillInventory('Chips', 4);
     const chips = vendingMachine.inventory[0];
     expect(chips.quantity).toEqual(9);
+    expect(vendingMachine.inventory.slice(1)).toEqual(inventory.slice(1));
   });
   test('refillInventory("Hersheys", 6)', () => {
     vendingMachine.refillInventory('Hersheys', 6);
     const hersheys = vendingMachine.inventory[10];
     expect(hersheys.quantity).toEqual(6);
+    expect(vendingMachine.inventory.slice(0, 10)).toEqual(
+      inventory.slice(0, 10)
+    );
   });
 
   test('addChange({})', () => {
@@ -182,6 +190,7 @@ describe('VendingMachine', () => {
   });
   test('addChange()', () => {
     expect(() => vendingMachine.addChange()).toThrow('Invalid change format');
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
   });
   test('addChange("foo")', () => {
     expect(() => vendingMachine.addChange('foo')).toThrow(
@@ -195,9 +204,38 @@ describe('VendingMachine', () => {
     );
     expect(vendingMachine.coinStorage).toEqual(coinStorage);
   });
-  // test('addChange({0.05: 11, 1: 20})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 1: 20 })).toThrow(
-  //     'Invalid denomination'
-  //   );
-  // });
+  test('addChange({0.05: 11, 0.25: 3.2})', () => {
+    expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: 3.2 })).toThrow(
+      'Invalid change quantity'
+    );
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
+  });
+  test('addChange({0.05: 11, 0.25: null})', () => {
+    expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: null })).toThrow(
+      'Invalid change quantity'
+    );
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
+  });
+  test('addChange({0.05: 11, 0.25: "foo"})', () => {
+    expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: 'foo' })).toThrow(
+      'Invalid change quantity'
+    );
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
+  });
+  test('addChange({0.05: 11, 0.25: -1})', () => {
+    expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: -1 })).toThrow(
+      'Invalid change quantity'
+    );
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
+  });
+  test('addChange({0.05: 11, 1: 20})', () => {
+    vendingMachine.addChange({ 0.05: 11, 1: 20 });
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 21,
+      0.1: 10,
+      0.25: 10,
+      1: 30,
+      2: 10
+    });
+  });
 });

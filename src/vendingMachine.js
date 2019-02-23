@@ -44,14 +44,15 @@ class VendingMachine {
       if (!this.coinStorage[denomination]) {
         throw 'Invalid denomination';
       }
+      const quantity = change[denomination];
+      if (parseInt(quantity) !== quantity || quantity <= 0) {
+        throw 'Invalid change quantity';
+      }
     });
-    // const coinStorage = {
-    //   0.05: 10,
-    //   0.1: 10,
-    //   0.25: 10,
-    //   1: 10,
-    //   2: 10
-    // };
+    Object.keys(change).map(denomination => {
+      const quantity = change[denomination];
+      this.coinStorage[denomination] += quantity;
+    });
   }
 
   dispenseInventory() {}
