@@ -305,6 +305,11 @@ describe('VendingMachine', () => {
     ).toThrow('Invalid change quantity');
   });
 
+  test('dispenseInventory("A2", {})', () => {
+    expect(() => vendingMachine.dispenseInventory('A2', {})).toThrow(
+      'Insufficient funds'
+    );
+  });
   test('dispenseInventory("A2", {0.25: 4})', () => {
     expect(() => vendingMachine.dispenseInventory('A2', { 0.25: 4 })).toThrow(
       'Insufficient funds'
@@ -320,13 +325,69 @@ describe('VendingMachine', () => {
   test('dispenseInventory("A2", {0.25: 4, 0.05: 20})', () => {
     expect(
       vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20 })
-    ).toEqual('Success');
+    ).toEqual(
+      'You bought: Pepsi (price: 2.00, location: A2). You paid: $2.00. No change returned.'
+    );
   });
 
   test('dispenseInventory("B1", {0.25: 4, 0.05: 19})', () => {
     // math rounding for floats
     expect(
       vendingMachine.dispenseInventory('B1', { 0.25: 4, 0.05: 19 })
-    ).toEqual('Success');
+    ).toEqual(
+      'You bought: Coke (price: 1.95, location: B1). You paid: $1.95. No change returned.'
+    );
+  });
+
+  // not enough change
+  test('dispenseInventory("A2", {0.25: 4, 0.05: 20, 2: 100})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20, 2: 100 })
+    ).toThrow('Not enough change to return. Please use exact change.');
+  });
+
+  test('dispenseInventory("B2", {0.25: 4, 0.1: 9})', () => {
+    vendingMachine.coinStorage = {
+      0.05: 2,
+      0.1: 3,
+      0.25: 1,
+      1: 1,
+      2: 1
+    };
+    expect(() =>
+      vendingMachine.dispenseInventory('B2', { 0.25: 4, 0.1: 9 })
+    ).toThrow('Not enough change to return. Please use exact change.');
+  });
+
+  // enough change, return exactly greedy
+  test('dispenseInventory("B3", {1: 2, 0.25: 5, 0.1: 3, 0.05: 2})', () => {
+    vendingMachine.coinStorage = {
+      0.05: 1,
+      0.1: 1,
+      0.25: 2,
+      1: 1,
+      2: 1
+    };
+    expect(
+      vendingMachine.dispenseInventory('B3', { 1: 2, 0.25: 5, 0.1: 3, 0.05: 2 })
+    ).toEqual(
+      'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 2 quarters, 1 dimes, 1 nickels.'
+    );
+  });
+
+  // enough change, but not exactly according to the greedy algorithm
+  test('dispenseInventory("B3", {1: 2, 0.25: 5, 0.1: 3, 0.05: 2})', () => {
+    vendingMachine.coinStorage = {
+      0.05: 5,
+      0.1: 2,
+      0.25: 1,
+      1: 1,
+      2: 1
+    };
+    expect(
+      vendingMachine.dispenseInventory('B3', { 1: 2, 0.25: 5, 0.1: 3, 0.05: 2 })
+    ).toEqual(
+      'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 1 quarters, 2 dimes, 4 nickels.'
+    );
   });
 });
