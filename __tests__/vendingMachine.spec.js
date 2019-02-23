@@ -3,20 +3,6 @@ const VendingMachine = require('../src/vendingMachine');
 describe('VendingMachine', () => {
   let vendingMachine, inventory, coinStorage;
   beforeEach(() => {
-    // const productLocation = {
-    //   A1: 'Chips Ahoy',
-    //   B1: 'Coke',
-    //   A2: 'Pepsi',
-    //   B3: 'Pringles',
-    //   B2: 'Pretzels',
-    //   C1: 'Apple Juice',
-    //   C3: 'Orange Juice',
-    //   C4: 'Veggie sticks',
-    //   A3: 'Snickers',
-    //   A4: 'Mars',
-    //   C2: null,
-    //   B4: null
-    // };
     inventory = [
       {
         title: 'Chips',
@@ -328,6 +314,14 @@ describe('VendingMachine', () => {
     ).toEqual(
       'You bought: Pepsi (price: 2.00, location: A2). You paid: $2.00. No change returned.'
     );
+    expect(vendingMachine.inventory[2].quantity).toEqual(9);
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 30,
+      0.1: 10,
+      0.25: 14,
+      1: 10,
+      2: 10
+    });
   });
 
   test('dispenseInventory("B1", {0.25: 4, 0.05: 19})', () => {
@@ -337,6 +331,14 @@ describe('VendingMachine', () => {
     ).toEqual(
       'You bought: Coke (price: 1.95, location: B1). You paid: $1.95. No change returned.'
     );
+    expect(vendingMachine.inventory[1].quantity).toEqual(6);
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 29,
+      0.1: 10,
+      0.25: 14,
+      1: 10,
+      2: 10
+    });
   });
 
   // not enough change
@@ -344,6 +346,8 @@ describe('VendingMachine', () => {
     expect(() =>
       vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20, 2: 100 })
     ).toThrow('Not enough change to return. Please use exact change.');
+    expect(vendingMachine.inventory[2].quantity).toEqual(10);
+    expect(vendingMachine.coinStorage).toEqual(coinStorage);
   });
 
   test('dispenseInventory("B2", {0.25: 4, 0.1: 9})', () => {
@@ -357,6 +361,13 @@ describe('VendingMachine', () => {
     expect(() =>
       vendingMachine.dispenseInventory('B2', { 0.25: 4, 0.1: 9 })
     ).toThrow('Not enough change to return. Please use exact change.');
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 2,
+      0.1: 3,
+      0.25: 1,
+      1: 1,
+      2: 1
+    });
   });
 
   // enough change, return exactly greedy
@@ -373,6 +384,13 @@ describe('VendingMachine', () => {
     ).toEqual(
       'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 2 quarters, 1 dimes, 1 nickels.'
     );
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 2,
+      0.1: 3,
+      0.25: 5,
+      1: 3,
+      2: 1
+    });
   });
 
   // enough change, but not exactly according to the greedy algorithm
@@ -389,5 +407,12 @@ describe('VendingMachine', () => {
     ).toEqual(
       'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 1 quarters, 2 dimes, 4 nickels.'
     );
+    expect(vendingMachine.coinStorage).toEqual({
+      0.05: 3,
+      0.1: 3,
+      0.25: 5,
+      1: 3,
+      2: 1
+    });
   });
 });

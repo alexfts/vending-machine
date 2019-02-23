@@ -82,20 +82,32 @@ class VendingMachine {
     if (changeAmount >= denominations[denominations.length - 1]) {
       throw 'Not enough change to return. Please use exact change.';
     }
+    return result;
+  }
+
+  getChangeDescription(change) {
+    const denominations = Object.keys(this.coinStorage).sort((a, b) => b - a);
+    const names = {
+      2: 'toonies',
+      1: 'loonies',
+      0.25: 'quarters',
+      0.1: 'dimes',
+      0.05: 'nickels'
+    };
     const desc = denominations
-      .filter(denomination => result[denomination] > 0)
-      .map(denomination => {
-        const names = {
-          2: 'toonies',
-          1: 'loonies',
-          0.25: 'quarters',
-          0.1: 'dimes',
-          0.05: 'nickels'
-        };
-        return `${result[denomination]} ${names[denomination]}`;
-      })
+      .filter(denomination => change[denomination] > 0)
+      .map(denomination => `${change[denomination]} ${names[denomination]}`)
       .join(', ');
     return desc === '' ? 'No change returned.' : `Your change is: ${desc}.`;
+  }
+
+  updateCoinStorage(gainedChange, lostChange) {
+    Object.keys(gainedChange).map(denom => {
+      this.coinStorage[denom] += gainedChange[denom];
+    });
+    Object.keys(lostChange).map(denom => {
+      this.coinStorage[denom] -= lostChange[denom];
+    });
   }
 
   dispenseInventory(code, change) {
@@ -106,10 +118,12 @@ class VendingMachine {
     const changeAmount = this.getChangeAmount(change);
     if (changeAmount < price) throw 'Insufficient funds';
     const changeToReturn = this.getChangeToReturn(changeAmount - price);
-
+    const changeDescription = this.getChangeDescription(changeToReturn);
+    product.quantity -= 1;
+    this.updateCoinStorage(change, changeToReturn);
     return `You bought: ${product.title} (price: ${price}, location: ${
       product.location
-    }). You paid: $${changeAmount}. ${changeToReturn}`;
+    }). You paid: $${changeAmount}. ${changeDescription}`;
   }
 }
 
