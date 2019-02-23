@@ -26,7 +26,7 @@ describe('VendingMachine', () => {
       },
       {
         title: 'Coke',
-        price: 2.0,
+        price: 1.95,
         quantity: 7,
         location: 'B1'
       },
@@ -106,7 +106,7 @@ describe('VendingMachine', () => {
   test('Vending machine full inventory', () => {
     const inventoryDescription = [
       'Chips: price 3.25, quantity: 5, location: A1',
-      'Coke: price 2, quantity: 7, location: B1',
+      'Coke: price 1.95, quantity: 7, location: B1',
       'Pepsi: price 2, quantity: 10, location: A2',
       'Pringles: price 3, quantity: 12, location: B3',
       'Pretzels: price 0.95, quantity: 4, location: B2',
@@ -237,5 +237,96 @@ describe('VendingMachine', () => {
       1: 30,
       2: 10
     });
+  });
+
+  test('dispenseInventory(null, {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory(null, { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory("", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('', { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory("Z4", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('Z4', { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory("A1B", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('A1B', { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory(5, {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory(5, { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory("a1", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('a1', { 0.25: 4 })).toThrow(
+      'Invalid code'
+    );
+  });
+  test('dispenseInventory("B4", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('B4', { 0.25: 4 })).toThrow(
+      'Out of stock'
+    );
+  });
+  test('dispenseInventory("A2")', () => {
+    expect(() => vendingMachine.dispenseInventory('A2')).toThrow(
+      'Invalid change format'
+    );
+  });
+  test('dispenseInventory("A2", "foo")', () => {
+    expect(() => vendingMachine.dispenseInventory('A2', 'foo')).toThrow(
+      'Invalid change format'
+    );
+  });
+  test('dispenseInventory("A2", {0.25: 2, 3: 1})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 2, 3: 1 })
+    ).toThrow('Invalid denomination');
+  });
+  test('dispenseInventory("A2", {0.25: 2, 1: "foo"})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 'foo' })
+    ).toThrow('Invalid change quantity');
+  });
+  test('dispenseInventory("A2", {0.25: 2, 1: 2.00001})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 2.00001 })
+    ).toThrow('Invalid change quantity');
+  });
+  test('dispenseInventory("A2", {0.25: 2, 1: -1})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: -1 })
+    ).toThrow('Invalid change quantity');
+  });
+
+  test('dispenseInventory("A2", {0.25: 4})', () => {
+    expect(() => vendingMachine.dispenseInventory('A2', { 0.25: 4 })).toThrow(
+      'Insufficient funds'
+    );
+  });
+  test('dispenseInventory("A2", {0.25: 4, 0.05: 19})', () => {
+    expect(() =>
+      vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 19 })
+    ).toThrow('Insufficient funds');
+  });
+
+  // Exact change
+  test('dispenseInventory("A2", {0.25: 4, 0.05: 20})', () => {
+    expect(
+      vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20 })
+    ).toEqual('Success');
+  });
+
+  test('dispenseInventory("B1", {0.25: 4, 0.05: 19})', () => {
+    // math rounding for floats
+    expect(
+      vendingMachine.dispenseInventory('B1', { 0.25: 4, 0.05: 19 })
+    ).toEqual('Success');
   });
 });

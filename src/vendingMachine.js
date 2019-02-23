@@ -13,7 +13,7 @@ class VendingMachine {
         if (!product.title || !product.price || !product.location) {
           throw 'Invalid inventory';
         }
-        if (parseFloat(product.price) !== product.price || product.price < 0) {
+        if (parseFloat(product.price) !== product.price || product.price <= 0) {
           throw 'Invalid inventory';
         }
         return `${product.title}: price ${product.price}, quantity: ${
@@ -36,8 +36,8 @@ class VendingMachine {
     product.quantity += quantity;
   }
 
-  addChange(change) {
-    if (!change || !(change instanceof Object)) {
+  validateChange(change) {
+    if (!(change instanceof Object)) {
       throw 'Invalid change format';
     }
     Object.keys(change).map(denomination => {
@@ -49,13 +49,37 @@ class VendingMachine {
         throw 'Invalid change quantity';
       }
     });
+  }
+
+  addChange(change) {
+    this.validateChange(change);
     Object.keys(change).map(denomination => {
       const quantity = change[denomination];
       this.coinStorage[denomination] += quantity;
     });
   }
 
-  dispenseInventory() {}
+  getChangeAmount(change) {
+    this.validateChange(change);
+    const amount = Object.keys(change).reduce((changeAmt, denomination) => {
+      const quantity = change[denomination];
+      return changeAmt + denomination * quantity;
+    }, 0);
+    return amount.toFixed(2);
+  }
+
+  getChangeToReturn(changeAmount) {}
+
+  dispenseInventory(code, change) {
+    const product = this.inventory.find(prod => prod.location === code);
+    if (!product) throw 'Invalid code';
+    if (product.quantity === 0) throw 'Out of stock';
+    const price = product.price.toFixed(2);
+    const changeAmount = this.getChangeAmount(change);
+    if (changeAmount < price) throw 'Insufficient funds';
+    if (changeAmount === price) return `Success`;
+    const changeToReturn = this.getChangeToReturn(changeAmount - price);
+  }
 }
 
 module.exports = VendingMachine;
