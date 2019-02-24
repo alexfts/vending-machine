@@ -8,7 +8,7 @@ class VendingMachine {
     }
     inventory.forEach(({ title, price, location, quantity }) => {
       if (!title || !price || !location) {
-        throw 'Invalid inventory t/p/l';
+        throw `Invalid inventory t/p/l ${title} ${price} ${location}`;
       }
       if (parseFloat(price).toFixed(2) !== price.toFixed(2) || price <= 0) {
         throw 'Invalid inventory: price not float';

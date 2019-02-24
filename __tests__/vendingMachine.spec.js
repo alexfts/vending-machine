@@ -1,4 +1,5 @@
 const VendingMachine = require('../src/vendingMachine');
+//const inventory = require('../src/inventory.json');
 
 describe('VendingMachine', () => {
   let vendingMachine, inventory, coinStorage;
