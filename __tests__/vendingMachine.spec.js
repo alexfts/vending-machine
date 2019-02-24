@@ -558,194 +558,354 @@ describe('VendingMachine', () => {
     });
   });
 
-  // test('dispenseInventory(null, {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory(null, { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory("", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('', { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory("Z4", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('Z4', { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory("A1B", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('A1B', { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory(5, {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory(5, { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory("a1", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('a1', { 0.25: 4 })).toThrow(
-  //     'Invalid code'
-  //   );
-  // });
-  // test('dispenseInventory("B4", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('B4', { 0.25: 4 })).toThrow(
-  //     'Out of stock'
-  //   );
-  // });
-  // test('dispenseInventory("A2")', () => {
-  //   expect(() => vendingMachine.dispenseInventory('A2')).toThrow(
-  //     'Invalid change format'
-  //   );
-  // });
-  // test('dispenseInventory("A2", "foo")', () => {
-  //   expect(() => vendingMachine.dispenseInventory('A2', 'foo')).toThrow(
-  //     'Invalid change format'
-  //   );
-  // });
-  // test('dispenseInventory("A2", {0.25: 2, 3: 1})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 2, 3: 1 })
-  //   ).toThrow('Invalid denomination');
-  // });
-  // test('dispenseInventory("A2", {0.25: 2, 1: "foo"})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 'foo' })
-  //   ).toThrow('Invalid change quantity');
-  // });
-  // test('dispenseInventory("A2", {0.25: 2, 1: 2.00001})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 2.00001 })
-  //   ).toThrow('Invalid change quantity');
-  // });
-  // test('dispenseInventory("A2", {0.25: 2, 1: -1})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: -1 })
-  //   ).toThrow('Invalid change quantity');
-  // });
+  describe('dispenseInventory(code, change)', () => {
+    describe('Invalid inputs', () => {
+      describe('when the code is not provided', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory(null, { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the code is not a string', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory(5, { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the code is an empty string', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('', { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the code is not a valid location', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A1B', { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the code is in lowercase', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('a1', { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the code is not contained in the inventory', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('Z4', { 0.25: 4 })
+          ).toThrow('Invalid code');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when no change is provided', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() => vendingMachine.dispenseInventory('A2')).toThrow(
+            'Invalid change format'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when change is not an object', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() => vendingMachine.dispenseInventory('A2', 'foo')).toThrow(
+            'Invalid change format'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when change contains non-numeric denomination', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 2, foo: 1 })
+          ).toThrow('Invalid denomination');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when change contains denomination not listed in coinStorage', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 2, 3: 1 })
+          ).toThrow('Invalid denomination');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when change contains non-numeric denomination quantity', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 'foo' })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when change contains non-integer denomination quantity', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: 2.00001 })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when denomination quantity is a negative integer', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 2, 1: -1 })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+    });
+    describe('Valid inputs, inventory not disposed', () => {
+      describe('when change is an empty object', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() => vendingMachine.dispenseInventory('A2', {})).toThrow(
+            'Insufficient funds'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the amount of change provided is smaller than price', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 4 })
+          ).toThrow('Insufficient funds');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when the amount of change provided is slightly smaller than price and floats representing the price are imprecise', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 19 })
+          ).toThrow('Insufficient funds');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when inventory is out of stock', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('B4', { 0.25: 4 })
+          ).toThrow('Out of stock');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when vending machine doesn\'t have enough change', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          expect(() =>
+            vendingMachine.dispenseInventory('A2', {
+              0.25: 4,
+              0.05: 20,
+              2: 100
+            })
+          ).toThrow('Not enough change to return. Please use exact change.');
+          expect(vendingMachine.inventory).toEqual(inventory);
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when vending machine goes through all denominations and doesn\'t find enough change', () => {
+        it('should throw an error and preserve the original inventory and coinStorage', () => {
+          const testCoinStorage = {
+            0.05: 2,
+            0.1: 3,
+            0.25: 1,
+            1: 1,
+            2: 1
+          };
+          vendingMachine.coinStorage = testCoinStorage;
+          expect(() =>
+            vendingMachine.dispenseInventory('B2', {
+              2: 1,
+              1: 1,
+              0.25: 4,
+              0.1: 9,
+              0.05: 1
+            })
+          ).toThrow('Not enough change to return. Please use exact change.');
+          expect(vendingMachine.coinStorage).toEqual(testCoinStorage);
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+    });
+    describe('Valid inputs, inventory disposed', () => {
+      describe('Exact change', () => {
+        describe('when exact change is provided', () => {
+          let dispensed;
+          beforeEach(() => {
+            dispensed = vendingMachine.dispenseInventory('A2', {
+              0.25: 4,
+              0.05: 20
+            });
+          });
+          it('should purchase the correct product, show how much was paid and say that no change was returned', () => {
+            expect(dispensed).toEqual(
+              'You bought: Pepsi (price: 2.00, location: A2). You paid: $2.00. No change returned.'
+            );
+          });
+          it('should decrement the product quantity in inventory', () => {
+            expect(vendingMachine.inventory[2].quantity).toEqual(9);
+          });
+          it('should add change to coinStorage', () => {
+            expect(vendingMachine.coinStorage).toEqual({
+              0.05: 30,
+              0.1: 10,
+              0.25: 14,
+              1: 10,
+              2: 10
+            });
+          });
+          it('should not affect any other product in inventory', () => {
+            expect([
+              ...vendingMachine.inventory.slice(0, 2),
+              ...vendingMachine.inventory.slice(3)
+            ]).toEqual([...inventory.slice(0, 2), ...inventory.slice(3)]);
+          });
+        });
+        describe('when exact change is provided, but cannot be presented as an exact float', () => {
+          let dispensed;
+          beforeEach(() => {
+            dispensed = vendingMachine.dispenseInventory('B1', {
+              0.25: 4,
+              0.05: 19
+            });
+          });
+          it('should purchase the correct product, show how much was paid and say that no change was returned', () => {
+            expect(dispensed).toEqual(
+              'You bought: Coke (price: 1.95, location: B1). You paid: $1.95. No change returned.'
+            );
+          });
+          it('should decrement the product quantity in inventory', () => {
+            expect(vendingMachine.inventory[1].quantity).toEqual(6);
+          });
+          it('should add change to coinStorage', () => {
+            expect(vendingMachine.coinStorage).toEqual({
+              0.05: 29,
+              0.1: 10,
+              0.25: 14,
+              1: 10,
+              2: 10
+            });
+          });
+          it('should not affect any other product in inventory', () => {
+            expect([
+              ...vendingMachine.inventory.slice(0, 1),
+              ...vendingMachine.inventory.slice(2)
+            ]).toEqual([...inventory.slice(0, 1), ...inventory.slice(2)]);
+          });
+        });
+      });
 
-  // test('dispenseInventory("A2", {})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('A2', {})).toThrow(
-  //     'Insufficient funds'
-  //   );
-  // });
-  // test('dispenseInventory("A2", {0.25: 4})', () => {
-  //   expect(() => vendingMachine.dispenseInventory('A2', { 0.25: 4 })).toThrow(
-  //     'Insufficient funds'
-  //   );
-  // });
-  // test('dispenseInventory("A2", {0.25: 4, 0.05: 19})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 19 })
-  //   ).toThrow('Insufficient funds');
-  // });
-
-  // // Exact change
-  // test('dispenseInventory("A2", {0.25: 4, 0.05: 20})', () => {
-  //   expect(
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20 })
-  //   ).toEqual(
-  //     'You bought: Pepsi (price: 2.00, location: A2). You paid: $2.00. No change returned.'
-  //   );
-  //   expect(vendingMachine.inventory[2].quantity).toEqual(9);
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 30,
-  //     0.1: 10,
-  //     0.25: 14,
-  //     1: 10,
-  //     2: 10
-  //   });
-  // });
-
-  // test('dispenseInventory("B1", {0.25: 4, 0.05: 19})', () => {
-  //   // math rounding for floats
-  //   expect(
-  //     vendingMachine.dispenseInventory('B1', { 0.25: 4, 0.05: 19 })
-  //   ).toEqual(
-  //     'You bought: Coke (price: 1.95, location: B1). You paid: $1.95. No change returned.'
-  //   );
-  //   expect(vendingMachine.inventory[1].quantity).toEqual(6);
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 29,
-  //     0.1: 10,
-  //     0.25: 14,
-  //     1: 10,
-  //     2: 10
-  //   });
-  // });
-
-  // // not enough change
-  // test('dispenseInventory("A2", {0.25: 4, 0.05: 20, 2: 100})', () => {
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('A2', { 0.25: 4, 0.05: 20, 2: 100 })
-  //   ).toThrow('Not enough change to return. Please use exact change.');
-  //   expect(vendingMachine.inventory[2].quantity).toEqual(10);
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-
-  // test('dispenseInventory("B2", {0.25: 4, 0.1: 9})', () => {
-  //   vendingMachine.coinStorage = {
-  //     0.05: 2,
-  //     0.1: 3,
-  //     0.25: 1,
-  //     1: 1,
-  //     2: 1
-  //   };
-  //   expect(() =>
-  //     vendingMachine.dispenseInventory('B2', { 0.25: 4, 0.1: 9 })
-  //   ).toThrow('Not enough change to return. Please use exact change.');
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 2,
-  //     0.1: 3,
-  //     0.25: 1,
-  //     1: 1,
-  //     2: 1
-  //   });
-  // });
-
-  // // enough change, return exactly greedy
-  // test('dispenseInventory("B3", {1: 2, 0.25: 5, 0.1: 3, 0.05: 2})', () => {
-  //   vendingMachine.coinStorage = {
-  //     0.05: 1,
-  //     0.1: 1,
-  //     0.25: 2,
-  //     1: 1,
-  //     2: 1
-  //   };
-  //   expect(
-  //     vendingMachine.dispenseInventory('B3', { 1: 2, 0.25: 5, 0.1: 3, 0.05: 2 })
-  //   ).toEqual(
-  //     'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 2 quarters, 1 dimes, 1 nickels.'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 2,
-  //     0.1: 3,
-  //     0.25: 5,
-  //     1: 3,
-  //     2: 1
-  //   });
-  // });
-
-  // // enough change, but not exactly according to the greedy algorithm
-  // test('dispenseInventory("B3", {1: 2, 0.25: 5, 0.1: 3, 0.05: 2})', () => {
-  //   vendingMachine.coinStorage = {
-  //     0.05: 5,
-  //     0.1: 2,
-  //     0.25: 1,
-  //     1: 1,
-  //     2: 1
-  //   };
-  //   expect(
-  //     vendingMachine.dispenseInventory('B3', { 1: 2, 0.25: 5, 0.1: 3, 0.05: 2 })
-  //   ).toEqual(
-  //     'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 1 quarters, 2 dimes, 4 nickels.'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 3,
-  //     0.1: 3,
-  //     0.25: 5,
-  //     1: 3,
-  //     2: 1
-  //   });
-  // });
+      describe('Should return change', () => {
+        describe('when there is enough change according to the greedy algorithm', () => {
+          let dispensed, testCoinStorage;
+          beforeEach(() => {
+            testCoinStorage = {
+              0.05: 1,
+              0.1: 1,
+              0.25: 2,
+              1: 1,
+              2: 1
+            };
+            vendingMachine.coinStorage = testCoinStorage;
+            dispensed = vendingMachine.dispenseInventory('B3', {
+              1: 2,
+              0.25: 5,
+              0.1: 3,
+              0.05: 2
+            });
+          });
+          it('should purchase the correct product, show how much was paid and show the correct change', () => {
+            expect(dispensed).toEqual(
+              'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 2 quarters, 1 dimes, 1 nickels.'
+            );
+          });
+          it('should decrement the product quantity in inventory', () => {
+            expect(vendingMachine.inventory[3].quantity).toEqual(11);
+          });
+          it('should correctly add new change to coinStorage and remove the change returned to customer', () => {
+            expect(vendingMachine.coinStorage).toEqual({
+              0.05: 2,
+              0.1: 3,
+              0.25: 5,
+              1: 3,
+              2: 1
+            });
+          });
+          it('should not affect any other product in inventory', () => {
+            expect([
+              ...vendingMachine.inventory.slice(0, 3),
+              ...vendingMachine.inventory.slice(4)
+            ]).toEqual([...inventory.slice(0, 3), ...inventory.slice(4)]);
+          });
+        });
+        describe('when the change disposed is not the most optimal according to the greedy algorithm', () => {
+          let dispensed, testCoinStorage;
+          beforeEach(() => {
+            testCoinStorage = {
+              0.05: 5,
+              0.1: 2,
+              0.25: 1,
+              1: 1,
+              2: 1
+            };
+            vendingMachine.coinStorage = testCoinStorage;
+            dispensed = vendingMachine.dispenseInventory('B3', {
+              1: 2,
+              0.25: 5,
+              0.1: 3,
+              0.05: 2
+            });
+          });
+          it('should purchase the correct product, show how much was paid and show the correct change', () => {
+            expect(dispensed).toEqual(
+              'You bought: Pringles (price: 3.00, location: B3). You paid: $3.65. Your change is: 1 quarters, 2 dimes, 4 nickels.'
+            );
+          });
+          it('should decrement the product quantity in inventory', () => {
+            expect(vendingMachine.inventory[3].quantity).toEqual(11);
+          });
+          it('should correctly add new change to coinStorage and remove the change returned to customer', () => {
+            expect(vendingMachine.coinStorage).toEqual({
+              0.05: 3,
+              0.1: 3,
+              0.25: 5,
+              1: 3,
+              2: 1
+            });
+          });
+          it('should not affect any other product in inventory', () => {
+            expect([
+              ...vendingMachine.inventory.slice(0, 3),
+              ...vendingMachine.inventory.slice(4)
+            ]).toEqual([...inventory.slice(0, 3), ...inventory.slice(4)]);
+          });
+        });
+      });
+    });
+  });
 });

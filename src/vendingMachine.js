@@ -38,8 +38,8 @@ class VendingMachine {
         throw 'Invalid quantity within coin storage';
       }
     });
-    this.coinStorage = coinStorage;
-    this.inventory = inventory;
+    this.coinStorage = { ...coinStorage };
+    this.inventory = [...inventory];
   }
 
   getInventory() {
