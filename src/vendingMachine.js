@@ -60,7 +60,7 @@ class VendingMachine {
     if (!product) {
       throw 'Invalid product title';
     }
-    if (parseInt(quantity) !== quantity) {
+    if (parseInt(quantity) !== quantity || quantity < 0) {
       throw 'Invalid quantity';
     }
     product.quantity += quantity;

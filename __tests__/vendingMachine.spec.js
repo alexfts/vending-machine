@@ -396,44 +396,70 @@ describe('VendingMachine', () => {
     });
   });
 
-  // test('refillInventory(null, 5)', () => {
-  //   expect(() => vendingMachine.refillInventory(null, 5)).toThrow(
-  //     'Invalid product title'
-  //   );
-  //   expect(vendingMachine.inventory).toEqual(inventory);
-  // });
-  // test('refillInventory("abc", 5)', () => {
-  //   expect(() => vendingMachine.refillInventory('abc', 5)).toThrow(
-  //     'Invalid product title'
-  //   );
-  //   expect(vendingMachine.inventory).toEqual(inventory);
-  // });
-  // test('refillInventory("Chips", "five")', () => {
-  //   expect(() => vendingMachine.refillInventory('Chips', 'five')).toThrow(
-  //     'Invalid quantity'
-  //   );
-  //   expect(vendingMachine.inventory).toEqual(inventory);
-  // });
-  // test('refillInventory("Chips", 4.5)', () => {
-  //   expect(() => vendingMachine.refillInventory('Chips', 4.5)).toThrow(
-  //     'Invalid quantity'
-  //   );
-  //   expect(vendingMachine.inventory).toEqual(inventory);
-  // });
-  // test('refillInventory("Chips", 4)', () => {
-  //   vendingMachine.refillInventory('Chips', 4);
-  //   const chips = vendingMachine.inventory[0];
-  //   expect(chips.quantity).toEqual(9);
-  //   expect(vendingMachine.inventory.slice(1)).toEqual(inventory.slice(1));
-  // });
-  // test('refillInventory("Hersheys", 6)', () => {
-  //   vendingMachine.refillInventory('Hersheys', 6);
-  //   const hersheys = vendingMachine.inventory[10];
-  //   expect(hersheys.quantity).toEqual(6);
-  //   expect(vendingMachine.inventory.slice(0, 10)).toEqual(
-  //     inventory.slice(0, 10)
-  //   );
-  // });
+  describe('refillInventory(productTitle, quantity)', () => {
+    describe('Invalid inputs', () => {
+      describe('when there is no product title', () => {
+        it('should throw an error and not affect the inventory', () => {
+          expect(() => vendingMachine.refillInventory(null, 5)).toThrow(
+            'Invalid product title'
+          );
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when product title is not in the inventory', () => {
+        it('should throw an error and not affect the inventory', () => {
+          expect(() => vendingMachine.refillInventory('abc', 5)).toThrow(
+            'Invalid product title'
+          );
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when product quantity is not numeric', () => {
+        it('should throw an error and not affect the inventory', () => {
+          expect(() => vendingMachine.refillInventory('Chips', '5')).toThrow(
+            'Invalid quantity'
+          );
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when product quantity is a float', () => {
+        it('should throw an error and not affect the inventory', () => {
+          expect(() => vendingMachine.refillInventory('Chips', 4.5)).toThrow(
+            'Invalid quantity'
+          );
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+      describe('when product quantity is a negative integer', () => {
+        it('should throw an error and not affect the inventory', () => {
+          expect(() => vendingMachine.refillInventory('Chips', -1)).toThrow(
+            'Invalid quantity'
+          );
+          expect(vendingMachine.inventory).toEqual(inventory);
+        });
+      });
+    });
+    describe('Valid inputs', () => {
+      describe('when refilling a product that has 0 quantity', () => {
+        it('should return the correct quantity and not affect the rest of inventory', () => {
+          vendingMachine.refillInventory('Hersheys', 6);
+          const hersheys = vendingMachine.inventory[10];
+          expect(hersheys.quantity).toEqual(6);
+          expect(vendingMachine.inventory.slice(0, 10)).toEqual(
+            inventory.slice(0, 10)
+          );
+        });
+      });
+      describe('when refilling a product that has non-zero quantity', () => {
+        it('should return the correct quantity and not affect the rest of inventory', () => {
+          vendingMachine.refillInventory('Chips', 4);
+          const chips = vendingMachine.inventory[0];
+          expect(chips.quantity).toEqual(9);
+          expect(vendingMachine.inventory.slice(1)).toEqual(inventory.slice(1));
+        });
+      });
+    });
+  });
 
   // test('addChange({})', () => {
   //   vendingMachine.addChange({});
