@@ -367,22 +367,35 @@ describe('VendingMachine', () => {
     });
   });
 
-  // test('Vending machine full inventory', () => {
-  //   const inventoryDescription = [
-  //     'Chips: price 3.25, quantity: 5, location: A1',
-  //     'Coke: price 1.95, quantity: 7, location: B1',
-  //     'Pepsi: price 2, quantity: 10, location: A2',
-  //     'Pringles: price 3, quantity: 12, location: B3',
-  //     'Pretzels: price 0.95, quantity: 4, location: B2',
-  //     'Apple Juice: price 1.55, quantity: 7, location: C1',
-  //     'Orange Juice: price 1.55, quantity: 7, location: C3',
-  //     'Veggie sticks: price 2.3, quantity: 4, location: C4',
-  //     'Snickers: price 4.2, quantity: 12, location: A3',
-  //     'Mars: price 4, quantity: 11, location: A4',
-  //     'Hersheys: price 8, quantity: 0, location: B4'
-  //   ].join('\n');
-  //   expect(vendingMachine.getInventory()).toEqual(inventoryDescription);
-  // });
+  describe('getInventory()', () => {
+    describe('when the inventory contains a single product', () => {
+      it('should return a single-line description', () => {
+        const inventoryDescription =
+          'Chips: price 3.25, quantity: 5, location: A1';
+        vendingMachine = new VendingMachine([inventory[0]], coinStorage);
+        expect(vendingMachine.getInventory()).toEqual(inventoryDescription);
+      });
+    });
+    describe('when the inventory contains multiple products', () => {
+      it('should return a multi-line description', () => {
+        const inventoryDescription = [
+          'Chips: price 3.25, quantity: 5, location: A1',
+          'Coke: price 1.95, quantity: 7, location: B1',
+          'Pepsi: price 2, quantity: 10, location: A2',
+          'Pringles: price 3, quantity: 12, location: B3',
+          'Pretzels: price 0.95, quantity: 4, location: B2',
+          'Apple Juice: price 1.55, quantity: 7, location: C1',
+          'Orange Juice: price 1.55, quantity: 7, location: C3',
+          'Veggie sticks: price 2.3, quantity: 4, location: C4',
+          'Snickers: price 4.2, quantity: 12, location: A3',
+          'Mars: price 4, quantity: 11, location: A4',
+          'Hersheys: price 8, quantity: 0, location: B4'
+        ].join('\n');
+        expect(vendingMachine.getInventory()).toEqual(inventoryDescription);
+      });
+    });
+  });
+
   // test('refillInventory(null, 5)', () => {
   //   expect(() => vendingMachine.refillInventory(null, 5)).toThrow(
   //     'Invalid product title'
