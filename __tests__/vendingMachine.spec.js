@@ -461,60 +461,102 @@ describe('VendingMachine', () => {
     });
   });
 
-  // test('addChange({})', () => {
-  //   vendingMachine.addChange({});
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange()', () => {
-  //   expect(() => vendingMachine.addChange()).toThrow('Invalid change format');
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange("foo")', () => {
-  //   expect(() => vendingMachine.addChange('foo')).toThrow(
-  //     'Invalid change format'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 10: 1})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 10: 1 })).toThrow(
-  //     'Invalid denomination'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 0.25: 3.2})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: 3.2 })).toThrow(
-  //     'Invalid change quantity'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 0.25: null})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: null })).toThrow(
-  //     'Invalid change quantity'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 0.25: "foo"})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: 'foo' })).toThrow(
-  //     'Invalid change quantity'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 0.25: -1})', () => {
-  //   expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: -1 })).toThrow(
-  //     'Invalid change quantity'
-  //   );
-  //   expect(vendingMachine.coinStorage).toEqual(coinStorage);
-  // });
-  // test('addChange({0.05: 11, 1: 20})', () => {
-  //   vendingMachine.addChange({ 0.05: 11, 1: 20 });
-  //   expect(vendingMachine.coinStorage).toEqual({
-  //     0.05: 21,
-  //     0.1: 10,
-  //     0.25: 10,
-  //     1.0: 30,
-  //     2.0: 10
-  //   });
-  // });
+  describe('addChange(change)', () => {
+    describe('Invalid change input', () => {
+      describe('when the change is undefined', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() => vendingMachine.addChange()).toThrow(
+            'Invalid change format'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when the change is not an object', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() => vendingMachine.addChange('foo')).toThrow(
+            'Invalid change format'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when the change contains a non-numeric denomination', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() => vendingMachine.addChange({ 0.05: 11, foo: 1 })).toThrow(
+            'Invalid denomination'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when the change contains a denomination not present in coinStorage', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() => vendingMachine.addChange({ 0.05: 11, 10: 1 })).toThrow(
+            'Invalid denomination'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when a denomination quantity is absent', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() =>
+            vendingMachine.addChange({ 0.05: 11, 0.25: null })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when a denomination quantity is non-numeric', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() =>
+            vendingMachine.addChange({ 0.05: 11, 0.25: 'foo' })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when a denomination quantity is a non-integer', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() =>
+            vendingMachine.addChange({ 0.05: 11, 0.25: 3.01 })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when a denomination quantity is a negative integer', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() =>
+            vendingMachine.addChange({ 0.05: 11, 0.25: -1 })
+          ).toThrow('Invalid change quantity');
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when a denomination quantity is 0', () => {
+        it('should throw an error and preserve the original coinStorage', () => {
+          expect(() => vendingMachine.addChange({ 0.05: 11, 0.25: 0 })).toThrow(
+            'Invalid change quantity'
+          );
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+    });
+    describe('Valid change input', () => {
+      describe('when the change is an empty object', () => {
+        it('should preserve the original coinStorage', () => {
+          vendingMachine.addChange({});
+          expect(vendingMachine.coinStorage).toEqual(coinStorage);
+        });
+      });
+      describe('when the change contains valid denominations and quantities', () => {
+        it('should add change to coinStorage', () => {
+          vendingMachine.addChange({ 0.05: 11, 1: 20 });
+          expect(vendingMachine.coinStorage).toEqual({
+            0.05: 21,
+            0.1: 10,
+            0.25: 10,
+            1.0: 30,
+            2.0: 10
+          });
+        });
+      });
+    });
+  });
 
   // test('dispenseInventory(null, {0.25: 4})', () => {
   //   expect(() => vendingMachine.dispenseInventory(null, { 0.25: 4 })).toThrow(
