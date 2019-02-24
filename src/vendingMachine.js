@@ -8,24 +8,34 @@ class VendingMachine {
     }
     inventory.forEach(({ title, price, location, quantity }) => {
       if (!title || !price || !location) {
-        throw `Invalid inventory t/p/l ${title} ${price} ${location}`;
+        throw `Invalid inventory`;
       }
-      if (parseFloat(price).toFixed(2) !== price.toFixed(2) || price <= 0) {
-        throw 'Invalid inventory: price not float';
+      if (typeof title !== 'string' || typeof location !== 'string') {
+        throw `Invalid inventory`;
+      }
+      if (
+        typeof price !== 'number' ||
+        price === Infinity ||
+        price === NaN ||
+        price <= 0
+      ) {
+        throw 'Invalid inventory';
       }
       if (parseInt(quantity) !== quantity || quantity < 0) {
-        throw 'Invalid inventory: quantity not int';
+        throw 'Invalid inventory';
       }
     });
 
-    if (!(coinStorage instanceof Object)) throw 'Invalid coinStorage format';
+    if (!(coinStorage instanceof Object)) throw 'Invalid coin storage';
+    if (Object.keys(coinStorage).length === 0)
+      throw 'Empty coin storage. Please add some change';
     Object.keys(coinStorage).map(denomination => {
       const quantity = coinStorage[denomination];
       if (!parseFloat(denomination) || denomination <= 0) {
-        throw `Invalid denomination within coinStorage ${denomination}`;
+        throw `Invalid denomination within coin storage`;
       }
       if (parseInt(quantity) !== quantity || quantity <= 0) {
-        throw 'Invalid quantity within coinStorage';
+        throw 'Invalid quantity within coin storage';
       }
     });
     this.coinStorage = coinStorage;
