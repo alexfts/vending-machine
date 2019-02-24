@@ -75,8 +75,8 @@ describe('VendingMachine', () => {
       0.05: 10,
       0.1: 10,
       0.25: 10,
-      1: 10,
-      2: 10
+      1.0: 10,
+      2.0: 10
     };
     vendingMachine = new VendingMachine(inventory, coinStorage);
   });
@@ -220,8 +220,8 @@ describe('VendingMachine', () => {
       0.05: 21,
       0.1: 10,
       0.25: 10,
-      1: 30,
-      2: 10
+      1.0: 30,
+      2.0: 10
     });
   });
 
