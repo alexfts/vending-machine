@@ -15,7 +15,8 @@ This repository contains an API for a vending machine and 80 tests written in Je
 - If the above conditions are met:
   - Showing the purchased product, how much was paid and how much change was returned
   - Decrementing the product quantity in inventory
-  - Updating the change in the vending machine
+  - Returning the correct change to the user. Note that the implementation attempts to return the minimal amount of coins as per the greedy algorithm. Assuming the coin denominations will be the same as in the real world, this algorithm should suffice.
+  - Updating the available change in the vending machine
   - Ensuring the rest of inventory isn't affected
 
 ![80 tests passed](/images/80_passed.png?raw=true '80 tests passed')
