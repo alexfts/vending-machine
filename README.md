@@ -25,12 +25,3 @@ This repository contains an API for a vending machine and 80 tests written in Je
 
 To setup, run `npm install`
 To run the tests, run `npm t`.
-
-## Test outputs
-
-See below the screenshots of all tests from the terminal.
-![Tests1](/images/tests1.png?raw=true 'Tests1')
-![Tests2](/images/tests2.png?raw=true 'Tests2')
-![Tests3](/images/tests3.png?raw=true 'Tests3')
-![Tests4](/images/tests4.png?raw=true 'Tests4')
-![Tests5](/images/tests5.png?raw=true 'Tests5')
