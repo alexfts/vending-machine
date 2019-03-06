@@ -8,6 +8,8 @@ This repository contains an API for a vending machine and 80 tests written in Je
 
 ### Main Functionalities
 
+The test covers each of the following functionalities:
+
 1. Creating a new instance of the VendingMachine class given the inventory and change
 2. Fetching all inventory of the vending machine in a single string description
 3. Refilling the vending machine inventory
